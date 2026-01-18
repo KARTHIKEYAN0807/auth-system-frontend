@@ -13,7 +13,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: 'https://auth-backend-bizp.onrender.com/login.php',
+            url: 'https://auth-system-backend-production-4178.up.railway.app/login.php',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ email, password }),

@@ -1,7 +1,9 @@
 $(document).ready(function () {
 
+    const API_BASE = 'https://auth-system-backend-production-4178.up.railway.app';
     const sessionId = localStorage.getItem('session_id');
 
+    // If not logged in → redirect
     if (!sessionId) {
         window.location.href = 'login.html';
         return;
@@ -15,15 +17,15 @@ $(document).ready(function () {
         $('#saveBtn').prop('disabled', !editable);
     }
 
-    // Default state → view only
+    // Default: view-only
     setEditable(false);
     $('#successMsg').addClass('d-none');
 
     /* ======================
-       LOAD PROFILE
+       LOAD PROFILE (GET)
     ====================== */
     $.ajax({
-        url: 'https://auth-backend-bizp.onrender.com/profile.php',
+        url: `${API_BASE}/profile.php`,
         method: 'GET',
         headers: {
             'Session-Id': sessionId
@@ -32,12 +34,13 @@ $(document).ready(function () {
         success: function (res) {
 
             if (res.status !== 'success') {
+                localStorage.removeItem('session_id');
                 window.location.href = 'login.html';
                 return;
             }
 
             $('#name').val(res.profile.name || '');
-            $('#email').val(res.profile.email).prop('disabled', true);
+            $('#email').val(res.profile.email || '').prop('disabled', true);
             $('#phone').val(res.profile.phone || '');
             $('#age').val(res.profile.age || '');
             $('#city').val(res.profile.city || '');
@@ -57,7 +60,7 @@ $(document).ready(function () {
     });
 
     /* ======================
-       SAVE PROFILE
+       SAVE PROFILE (POST)
     ====================== */
     $('#saveBtn').click(function () {
 
@@ -70,24 +73,27 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: '../backend/profile.php',
+            url: `${API_BASE}/profile.php`,
             method: 'POST',
             headers: {
                 'Session-Id': sessionId
             },
             contentType: 'application/json',
+            dataType: 'json',
             data: JSON.stringify(data),
-            success: function () {
+            success: function (res) {
 
-                // Show success message
+                if (res.status !== 'success') {
+                    alert('Profile update failed');
+                    return;
+                }
+
                 $('#successMsg')
                     .removeClass('d-none')
                     .text('Profile updated successfully');
 
-                // Lock fields again
                 setEditable(false);
 
-                // Auto-hide message
                 setTimeout(function () {
                     $('#successMsg').addClass('d-none');
                 }, 3000);

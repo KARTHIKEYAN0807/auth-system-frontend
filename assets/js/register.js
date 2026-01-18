@@ -18,7 +18,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-      url: 'https://auth-backend-bizp.onrender.com/register.php',
+      url: 'https://auth-system-backend-production-4178.up.railway.app/register.php',
       method: 'POST',
       contentType: 'application/json',   // ✅ REQUIRED
       dataType: 'json',                  // ✅ EXPECT JSON
